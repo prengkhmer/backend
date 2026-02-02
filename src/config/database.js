@@ -48,43 +48,13 @@
 
 // module.exports = db;
 
-// require("dotenv").config();
-// const { Sequelize } = require("sequelize");
-
-// const sequelize = process.env.DATABASE_URL
-//   ? new Sequelize(process.env.DATABASE_URL, {
-//       dialect: "mysql",
-//       logging: false,
-//     })
-//   : new Sequelize(
-//       process.env.DB_NAME || "ecommerce",
-//       process.env.DB_USER || "root",
-//       process.env.DB_PASSWORD || "",
-//       {
-//         host: process.env.DB_HOST || "localhost",
-//         port: process.env.DB_PORT || 3306,
-//         dialect: "mysql",
-//         logging: false,
-//       },
-//     );
-
-// module.exports = sequelize;
-
-// src/config/database.js
 require("dotenv").config();
 const { Sequelize } = require("sequelize");
-const path = require("path");
-const fs = require("fs");
 
-const DATABASE_URL = process.env.DATABASE_URL;
-
-const sequelize = DATABASE_URL
-  ? new Sequelize(DATABASE_URL, {
+const sequelize = process.env.DATABASE_URL
+  ? new Sequelize(process.env.DATABASE_URL, {
       dialect: "mysql",
       logging: false,
-      dialectOptions: {
-        ssl: { require: true, rejectUnauthorized: false },
-      },
     })
   : new Sequelize(
       process.env.DB_NAME || "ecommerce",
@@ -92,40 +62,10 @@ const sequelize = DATABASE_URL
       process.env.DB_PASSWORD || "",
       {
         host: process.env.DB_HOST || "localhost",
-        port: Number(process.env.DB_PORT || 3306),
+        port: process.env.DB_PORT || 3306,
         dialect: "mysql",
         logging: false,
       },
     );
 
-const db = {};
-db.Sequelize = Sequelize;
-db.sequelize = sequelize;
-
-// ✅ Auto load all model files in src/models
-const modelsPath = path.join(__dirname, "../models");
-const modelFiles = fs
-  .readdirSync(modelsPath)
-  .filter((file) => file.endsWith(".js") && file !== "index.js");
-
-modelFiles.forEach((file) => {
-  const modelPath = path.join(modelsPath, file);
-
-  // IMPORTANT: model file should export (sequelize, DataTypes)=>Model
-  const defineModel = require(modelPath);
-
-  const model = defineModel(sequelize, Sequelize.DataTypes);
-  if (model?.name) db[model.name] = model;
-});
-
-// ✅ Associations
-Object.keys(db).forEach((name) => {
-  if (db[name]?.associate) db[name].associate(db);
-});
-
-console.log(
-  "✅ Sequelize initialized with models:",
-  Object.keys(db).filter((k) => !["sequelize", "Sequelize"].includes(k)),
-);
-
-module.exports = db;
+module.exports = sequelize;
