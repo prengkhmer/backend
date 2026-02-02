@@ -597,9 +597,11 @@ const settingsRoutes = require("./src/routes/settingsRoute");
 const dashboardRoute = require("./src/routes/dashboardRoute");
 const stockRoutes = require("./src/routes/stockRoutes");
 const StaffRoutes = require("./src/routes/StaffRoute");
-
-// ✅ DB (IMPORT ONLY ONCE)
 const { sequelize } = require("./src/config/db");
+
+// DB
+const db = require("./src/config/db");
+// const sequelize = db.sequelize;
 
 // Jobs
 const stockLevelChecker = require("./src/jobs/stockLevelChecker");
@@ -617,7 +619,7 @@ const allowedOrigins = process.env.ALLOWED_ORIGINS
 app.use(
   cors({
     origin: (origin, cb) => {
-      if (!origin) return cb(null, true); // Postman/curl
+      if (!origin) return cb(null, true);
       if (allowedOrigins.includes("*")) return cb(null, true);
       if (allowedOrigins.includes(origin)) return cb(null, true);
       return cb(new Error(`CORS blocked: ${origin}`));
@@ -627,8 +629,9 @@ app.use(
   }),
 );
 
-// ✅ Preflight (DON'T use "*" for some router versions)
-app.options(/.*/, cors());
+// ✅ Preflight
+// app.options("*", cors());
+// app.options(/.*/, cors());
 
 app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ extended: true, limit: "50mb" }));
@@ -646,7 +649,10 @@ const io = new Server(server, {
 app.set("io", io);
 
 io.on("connection", (socket) => {
-  socket.on("disconnect", () => {});
+  // console.log("🔌 Socket connected:", socket.id);
+  socket.on("disconnect", () => {
+    // console.log("🔌 Socket disconnected:", socket.id);
+  });
 });
 
 // ✅ Health check
@@ -712,14 +718,7 @@ app.use((err, req, res, next) => {
 async function syncDatabase() {
   try {
     await sequelize.authenticate();
-
-    // Production: do NOT alter
-    if (process.env.NODE_ENV === "production") {
-      await sequelize.sync({ alter: false });
-    } else {
-      await sequelize.sync({ alter: true });
-    }
-
+    await sequelize.sync({ alter: process.env.NODE_ENV !== "production" });
     return true;
   } catch (error) {
     console.error("❌ DB sync/auth error:", error.message);
@@ -735,7 +734,9 @@ server.listen(PORT, "0.0.0.0", async () => {
 
   const ok = await syncDatabase();
   if (!ok) {
-    console.warn("⚠️ Server running but DB not connected. Jobs will not start.");
+    console.warn(
+      "⚠️ Server running but DB not connected. Jobs will not start.",
+    );
     return;
   }
 

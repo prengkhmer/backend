@@ -58,22 +58,38 @@
 
 // module.exports = db;
 
-// src/config/db.js
 require("dotenv").config();
 const { Sequelize } = require("sequelize");
 
+// Railway: DATABASE_URL should be like mysql://user:pass@host:port/db
 const DATABASE_URL = process.env.DATABASE_URL;
 
-if (!DATABASE_URL) {
-  throw new Error("DATABASE_URL is missing on Railway variables");
+let sequelize;
+
+if (DATABASE_URL && DATABASE_URL.startsWith("mysql")) {
+  sequelize = new Sequelize(DATABASE_URL, {
+    dialect: "mysql",
+    logging: false,
+    dialectOptions: {
+      ssl: {
+        require: true,
+        rejectUnauthorized: false,
+      },
+    },
+  });
+} else {
+  // local fallback
+  sequelize = new Sequelize(
+    process.env.DB_NAME || "ecommerce",
+    process.env.DB_USER || "root",
+    process.env.DB_PASSWORD || "",
+    {
+      host: process.env.DB_HOST || "localhost",
+      port: process.env.DB_PORT || 3306,
+      dialect: "mysql",
+      logging: false,
+    },
+  );
 }
 
-const sequelize = new Sequelize(DATABASE_URL, {
-  dialect: "mysql",
-  logging: false,
-  dialectOptions: {
-    ssl: { require: true, rejectUnauthorized: false },
-  },
-});
-
-module.exports = { sequelize };
+module.exports = sequelize;
