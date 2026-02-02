@@ -58,23 +58,44 @@
 
 // module.exports = db;
 
+
+// src/config/db.js
+require("dotenv").config();
 const { Sequelize } = require("sequelize");
 
-const sequelize = new Sequelize(process.env.DATABASE_URL, {
-  dialect: "mysql",
-  logging: false,
-  dialectOptions: {
-    ssl: {
-      require: true,
-      rejectUnauthorized: false,
+const DATABASE_URL = process.env.DATABASE_URL;
+
+// ✅ If DATABASE_URL exists, use it (Railway)
+let sequelize;
+
+if (DATABASE_URL && typeof DATABASE_URL === "string" && DATABASE_URL.trim() !== "") {
+  sequelize = new Sequelize(DATABASE_URL, {
+    dialect: "mysql",
+    logging: false,
+    dialectOptions: {
+      ssl: {
+        require: true,
+        rejectUnauthorized: false,
+      },
     },
-  },
-  pool: {
-    max: 5,
-    min: 0,
-    acquire: 30000,
-    idle: 10000,
-  },
-});
+    pool: { max: 5, min: 0, acquire: 30000, idle: 10000 },
+  });
+} else {
+  // ✅ Local fallback
+  const DB_NAME = process.env.DB_NAME || "ecommerce";
+  const DB_USER = process.env.DB_USER || "root";
+  const DB_PASSWORD = process.env.DB_PASSWORD || "";
+  const DB_HOST = process.env.DB_HOST || "localhost";
+  const DB_PORT = Number(process.env.DB_PORT || 3306);
+
+  sequelize = new Sequelize(DB_NAME, DB_USER, DB_PASSWORD, {
+    host: DB_HOST,
+    port: DB_PORT,
+    dialect: "mysql",
+    logging: false,
+  });
+
+  console.log("⚠️ DATABASE_URL is missing. Using local DB config.");
+}
 
 module.exports = { sequelize };
