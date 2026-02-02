@@ -63,18 +63,35 @@ const { Sequelize } = require("sequelize");
 
 const url = process.env.DATABASE_URL || process.env.MYSQL_URL;
 
-if (!url || !url.startsWith("mysql://")) {
-  throw new Error(
-    "DB url missing. Set DATABASE_URL or MYSQL_URL (mysql://...)",
-  );
-}
+let sequelize;
 
-const sequelize = new Sequelize(url, {
-  dialect: "mysql",
-  logging: false,
-  dialectOptions: {
-    ssl: { require: true, rejectUnauthorized: false },
-  },
-});
+if (url && url.startsWith("mysql://")) {
+  sequelize = new Sequelize(url, {
+    dialect: "mysql",
+    logging: false,
+    dialectOptions: {
+      ssl: { require: true, rejectUnauthorized: false },
+    },
+  });
+} else {
+  // fallback for Railway MYSQLHOST vars / local
+  const host = process.env.MYSQLHOST || process.env.DB_HOST || "localhost";
+  const user = process.env.MYSQLUSER || process.env.DB_USER || "root";
+  const pass = process.env.MYSQLPASSWORD || process.env.DB_PASSWORD || "";
+  const name = process.env.MYSQLDATABASE || process.env.DB_NAME || "ecommerce";
+  const port = Number(process.env.MYSQLPORT || process.env.DB_PORT || 3306);
+
+  if (!host) throw new Error("DB host missing (MYSQLHOST/DB_HOST)");
+
+  sequelize = new Sequelize(name, user, pass, {
+    host,
+    port,
+    dialect: "mysql",
+    logging: false,
+    dialectOptions: {
+      ssl: { require: true, rejectUnauthorized: false },
+    },
+  });
+}
 
 module.exports = sequelize;
