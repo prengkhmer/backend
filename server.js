@@ -601,7 +601,7 @@ const { sequelize } = require("./src/config/db");
 
 // DB
 const db = require("./src/config/db");
-const sequelize = db.sequelize;
+// const sequelize = db.sequelize;
 
 // Jobs
 const stockLevelChecker = require("./src/jobs/stockLevelChecker");
