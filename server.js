@@ -68,8 +68,11 @@ const stockRoutes = require("./src/routes/stockRoutes");
 const StaffRoutes = require("./src/routes/StaffRoute");
 // console.log('✅ Staff routes loaded');
 
-const db = require("./src/config/db");
+// const db = require("./src/config/db");
 const sequelize = db.sequelize;
+const db = require("./src/models");
+// const sequelize = db.sequelize;
+
 const app = express();
 const server = http.createServer(app);
 const fs = require("fs");
@@ -84,6 +87,26 @@ const io = socketIo(server, {
   },
 });
 // console.log('✅ Server components created');
+//==================================================================//
+ // ✅ CORS
+const allowedOrigins = process.env.ALLOWED_ORIGINS
+  ? process.env.ALLOWED_ORIGINS.split(",").map((o) => o.trim())
+  : ["http://localhost:3000"];
+
+const corsOptions = {
+  origin: (origin, cb) => {
+    if (!origin) return cb(null, true);
+    if (allowedOrigins.includes("*")) return cb(null, true);
+    if (allowedOrigins.includes(origin)) return cb(null, true);
+    return cb(new Error(`CORS blocked: ${origin}`));
+  },
+  credentials: false,
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+};
+app.use(cors(corsOptions));
+app.options(/.*/, cors(corsOptions));
+//=====================================================================//
+
 
 // Middleware
 // console.log('⚙️  Setting up middleware...');
