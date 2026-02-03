@@ -1,7 +1,7 @@
 // models/SaleItem.js
 const { DataTypes } = require("sequelize");
 
-module.exports = (sequelize) => {
+module.exports = (sequelize, DataTypes) => {
   const SaleItem = sequelize.define(
     "SaleItem",
     {

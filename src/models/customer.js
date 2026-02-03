@@ -1,7 +1,7 @@
 // models/Customer.js
 const { DataTypes } = require("sequelize");
 
-module.exports = (sequelize) => {
+module.exports = (sequelize, DataTypes) => {
   const Customer = sequelize.define(
     "Customer",
     {
