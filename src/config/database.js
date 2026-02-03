@@ -48,6 +48,8 @@
 
 // module.exports = db;
 
+
+
 require("dotenv").config();
 const { Sequelize } = require("sequelize");
 

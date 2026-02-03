@@ -58,47 +58,9 @@
 
 // module.exports = db;
 
-// require("dotenv").config();
-// const { Sequelize } = require("sequelize");
 
-// const url = process.env.DATABASE_URL || process.env.MYSQL_URL;
 
-// let sequelize;
-
-// if (url && url.startsWith("mysql://")) {
-//   sequelize = new Sequelize(url, {
-//     dialect: "mysql",
-//     logging: false,
-//     dialectOptions: {
-//       ssl: { require: true, rejectUnauthorized: false },
-//     },
-//   });
-// } else {
-//   // fallback for Railway MYSQLHOST vars / local
-//   const host = process.env.MYSQLHOST || process.env.DB_HOST || "localhost";
-//   const user = process.env.MYSQLUSER || process.env.DB_USER || "root";
-//   const pass = process.env.MYSQLPASSWORD || process.env.DB_PASSWORD || "";
-//   const name = process.env.MYSQLDATABASE || process.env.DB_NAME || "ecommerce";
-//   const port = Number(process.env.MYSQLPORT || process.env.DB_PORT || 3306);
-
-//   if (!host) throw new Error("DB host missing (MYSQLHOST/DB_HOST)");
-
-//   sequelize = new Sequelize(name, user, pass, {
-//     host,
-//     port,
-//     dialect: "mysql",
-//     logging: false,
-
-//     dialectOptions: {
-//       ssl: { require: true, rejectUnauthorized: false },
-
-//     },
-//   });
-//   console.log("DATABASE_URL =", process.env.DATABASE_URL);
-
-// }
-
-// module.exports = sequelize;
+////
 
 require("dotenv").config();
 const { Sequelize } = require("sequelize");
