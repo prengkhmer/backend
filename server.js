@@ -76,16 +76,16 @@ const db = require("./src/models");
 const app = express();
 const server = http.createServer(app);
 const fs = require("fs");
-const io = socketIo(server, {
-  cors: {
-    origin: "*",
-    // methods: ["GET", "POST"],
-    // origin: "*.railway.app",
-    // credentials: true,
-    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
-    credentials: false,
-  },
-});
+// const io = socketIo(server, {
+//   cors: {
+//     origin: "*",
+//     // methods: ["GET", "POST"],
+//     // origin: "*.railway.app",
+//     // credentials: true,
+//     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+//     credentials: false,
+//   },
+// });
 // console.log('✅ Server components created');
 //==================================================================//
  // ✅ CORS
