@@ -258,18 +258,20 @@
 //     }
 //   });
 
+
 ///===================================================///////////
 
+// server.js
 require("dotenv").config();
+
+// ✅ Load DB FIRST
+const db = require("./src/models");
+const sequelize = db.sequelize;
 
 const express = require("express");
 const cors = require("cors");
 const http = require("http");
 const { Server } = require("socket.io");
-
-// ✅ Load models + sequelize
-const db = require("./src/models");
-const sequelize = db.sequelize;
 
 // Routes
 const customerRoute = require("./src/routes/customerRoute");
@@ -298,7 +300,7 @@ const expirationChecker = require("./src/jobs/expirationChecker");
 const app = express();
 const server = http.createServer(app);
 
-// ✅ Allowed origins
+// ✅ CORS
 const allowedOrigins = process.env.ALLOWED_ORIGINS
   ? process.env.ALLOWED_ORIGINS.split(",").map((o) => o.trim())
   : ["http://localhost:3000"];
@@ -395,21 +397,21 @@ app.use((err, req, res, next) => {
   });
 });
 
-// ✅ DB init (single, safe)
+// ✅ DB init ONCE
 async function initDatabase() {
-  const isProd = process.env.NODE_ENV === "production";
-
   try {
+    if (!sequelize) throw new Error("sequelize instance is missing");
+
     await sequelize.authenticate();
     console.log("✅ DB connected");
 
-    // ✅ Only alter in dev
-    await sequelize.sync({ alter: !isProd });
-
+    const isProd = process.env.NODE_ENV === "production";
+    await sequelize.sync({ alter: !isProd }); // alter only in dev
     console.log("✅ DB sync done");
+
     return true;
-  } catch (err) {
-    console.error("❌ DB init error:", err.message);
+  } catch (e) {
+    console.error("❌ DB init error:", e.message);
     return false;
   }
 }
@@ -422,9 +424,7 @@ server.listen(PORT, "0.0.0.0", async () => {
 
   const ok = await initDatabase();
   if (!ok) {
-    console.warn(
-      "⚠️ Server running but DB not connected. Jobs will not start.",
-    );
+    console.warn("⚠️ Server running but DB not connected. Jobs will not start.");
     return;
   }
 

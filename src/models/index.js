@@ -2,14 +2,13 @@
 const fs = require("fs");
 const path = require("path");
 const Sequelize = require("sequelize");
-const sequelize = require("../config/db"); // must export Sequelize instance
+const sequelize = require("../config/db");
 
 const db = {};
-
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
-// Load all model files except index.js
+// Load all models except index.js
 fs.readdirSync(__dirname)
   .filter((file) => file !== "index.js" && file.endsWith(".js"))
   .forEach((file) => {
@@ -18,6 +17,7 @@ fs.readdirSync(__dirname)
     try {
       const modelFactory = require(fullPath);
 
+      // MUST be a function: (sequelize, DataTypes) => Model
       if (typeof modelFactory !== "function") {
         console.log(`⚠️ Skip (not a model factory): ${file}`);
         return;
@@ -37,7 +37,7 @@ fs.readdirSync(__dirname)
     }
   });
 
-// Run associations
+// Associations
 Object.keys(db).forEach((name) => {
   if (db[name] && typeof db[name].associate === "function") {
     try {
@@ -51,7 +51,7 @@ Object.keys(db).forEach((name) => {
 
 console.log(
   "✅ Sequelize models:",
-  Object.keys(db).filter((k) => !["Sequelize", "sequelize"].includes(k)),
+  Object.keys(db).filter((k) => !["Sequelize", "sequelize"].includes(k))
 );
 
 module.exports = db;

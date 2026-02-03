@@ -60,6 +60,7 @@
 
 ////
 
+// src/config/db.js
 require("dotenv").config();
 const { Sequelize } = require("sequelize");
 
@@ -69,17 +70,18 @@ if (!url || !url.startsWith("mysql://")) {
   throw new Error("DATABASE_URL missing/invalid. Must start with mysql://");
 }
 
-const isPublic = url.includes("proxy.rlwy.net");
+// Railway public proxy needs SSL. Internal URL usually doesn't.
+const useSSL =
+  url.includes("proxy.rlwy.net") ||
+  url.includes("railway") ||
+  process.env.DB_SSL === "true";
 
 const sequelize = new Sequelize(url, {
   dialect: "mysql",
   logging: false,
-  dialectOptions: isPublic
+  dialectOptions: useSSL
     ? {
-        ssl: {
-          require: true,
-          rejectUnauthorized: false,
-        },
+        ssl: { require: true, rejectUnauthorized: false },
       }
     : {},
 });
