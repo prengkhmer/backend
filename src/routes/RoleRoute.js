@@ -5,22 +5,22 @@ const {
   updateRole,
   deleteRole,
 } = require("../controllers/RoleController");
-const auth = require("../middlewares/auth.middleware")
+const auth = require("../middlewares/auth.middleware");
 const Role = (app) => {
   // Create a new role
-  app.post("/api/roles", auth.validate_token(),createRole);
+  app.post("/api/roles", createRole);
 
   // Get all roles
-  app.get("/api/roles", auth.validate_token(),getAllRoles);
+  app.get("/api/roles", auth.validate_token(), getAllRoles);
 
   // Get a role by ID
-  app.get("/api/roles/:id", auth.validate_token(),getRoleById);
+  app.get("/api/roles/:id", auth.validate_token(), getRoleById);
 
   // Update a role
-  app.put("/api/roles/:id", auth.validate_token(),updateRole);
+  app.put("/api/roles/:id", auth.validate_token(), updateRole);
 
   // Delete a role
-  app.delete("/api/roles/:id",auth.validate_token(), deleteRole);
+  app.delete("/api/roles/:id", auth.validate_token(), deleteRole);
 };
 
 module.exports = Role;
