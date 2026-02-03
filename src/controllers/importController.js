@@ -1,7 +1,7 @@
 const { Op } = require('sequelize');
-const sequelize = require('../config/db');
+const sequelize = require('../models');
 // const db = require('../models');
-const db = require('../config/db');
+const db = require('../models');
 const Purchase = db.Purchase;
 const PurchaseItem = db.PurchaseItem;
 const Product = db.Product;

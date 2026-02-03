@@ -1,5 +1,5 @@
 const NotificationService = require("../services/notificationService");
-const db = require("../config/db");
+const db = require("../models");
 const { Op } = require("sequelize");
 const { Product, Brand, Category, Notification } = db;
 

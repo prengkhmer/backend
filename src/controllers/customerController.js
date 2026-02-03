@@ -1,5 +1,5 @@
 // customerController.js
-const db = require('../config/db');
+const db = require('../models');
 // const db = require('../models');
 const Customer = db.Customer;
 

@@ -68,7 +68,7 @@ const stockRoutes = require("./src/routes/stockRoutes");
 const StaffRoutes = require("./src/routes/StaffRoute");
 // console.log('✅ Staff routes loaded');
 
-const db = require("./src/config/db");
+const db = require("./src/models");
 const sequelize = db.sequelize;
 const app = express();
 const server = http.createServer(app);

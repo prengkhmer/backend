@@ -151,7 +151,7 @@ const stockRoutes = (app) => {
   app.get('/api/stock/low', auth.validate_token(), async (req, res) => {
     try {
       const { threshold = 10 } = req.query;
-      const db = require('../config/db');
+      const db = require('../models');
       const { Op } = require('sequelize');
       const Product = db.Product;
       const Brand = db.Brand;

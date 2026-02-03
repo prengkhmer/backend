@@ -1,6 +1,5 @@
 // controllers/StaffController.js
-// const db = require('../models');
-const db = require('../config/db');
+const db = require('../models');
 const Staff = db.Staff;
 const Role = db.Role;
 

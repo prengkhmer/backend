@@ -360,7 +360,7 @@
 
 
 // const db = require("../models");
-const db = require('../config/db');
+const db = require('../models');
 const Sales = db.Sale;
 const SaleItems = db.SaleItem;
 const Customer = db.Customer;

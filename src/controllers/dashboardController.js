@@ -1,6 +1,6 @@
 // const db = require('../models');
 const { Op } = require('sequelize');
-const db = require('../config/db');
+const db = require('../models');
 
 const Product = db.Product;
 const Sales = db.Sale;

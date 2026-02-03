@@ -1,4 +1,4 @@
-const db = require('../config/db');
+const db = require('../models');
 const Category = db.Category;
 
 const getCategory = async (req , res)=>{

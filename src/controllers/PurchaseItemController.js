@@ -1,5 +1,5 @@
 // const db = require('../models');
-const db = require('../config/db');
+const db = require('../models');
 const Product = db.Product;
 const Purchase = db.Purchase;
 const PurchaseItem = db.PurchaseItem;

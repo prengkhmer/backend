@@ -1,4 +1,4 @@
-const db = require("../config/db");
+const db = require("../models");
 const { Op } = require("sequelize");
 const { sendEmail } = require("./emailService");
 

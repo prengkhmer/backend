@@ -2,7 +2,38 @@
 const fs = require("fs");
 const path = require("path");
 const Sequelize = require("sequelize");
-const sequelize = require("../config/db");
+
+// Initialize Sequelize based on environment
+let sequelize;
+if (process.env.DATABASE_URL) {
+  // Production: Use Railway DATABASE_URL
+  sequelize = new Sequelize(process.env.DATABASE_URL, {
+    dialect: 'mysql',
+    logging: false,
+    pool: {
+      max: 10,
+      min: 0,
+      acquire: 30000,
+      idle: 10000
+    }
+  });
+  console.log('✅ Using Railway DATABASE_URL connection');
+} else {
+  // Local development
+  sequelize = new Sequelize('ecommerce', 'root', '', {
+    host: 'localhost',
+    dialect: 'mysql',
+    logging: false,
+    pool: {
+      max: 10,
+      min: 0,
+      acquire: 30000,
+      idle: 10000
+    }
+  });
+  console.log('✅ Using local database connection');
+}
+
 const db = {};
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
@@ -34,10 +65,18 @@ fs.readdirSync(__dirname)
     }
   });
 
+// Set up associations
 Object.keys(db).forEach((name) => {
   if (db[name] && typeof db[name].associate === "function") {
-    db[name].associate(db);
+    try {
+      db[name].associate(db);
+      console.log(`✅ ${name} associations set up`);
+    } catch (error) {
+      console.log(`❌ Failed to set up associations for ${name}:`, error.message);
+    }
   }
 });
+
+console.log('✅ Models initialized:', Object.keys(db).filter(key => key !== 'sequelize' && key !== 'Sequelize'));
 
 module.exports = db;

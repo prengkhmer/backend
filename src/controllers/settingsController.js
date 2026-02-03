@@ -1,7 +1,7 @@
 // src/controllers/settingsController.js
 const { Op } = require('sequelize');
 // const db = require('../models');
-const db = require('../config/db');
+const db = require('../models');
 const Setting = db.Setting;
 
 async function getSettingsInternal() {
